@@ -41,8 +41,9 @@ public class UserRepository {
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
+        } finally {
+            session.close();
         }
-        session.close();
         return user;
     }
 
@@ -51,11 +52,12 @@ public class UserRepository {
      *
      * @param user пользователь.
      */
-    public void update(User user) {
+    public boolean update(User user) {
         Session session = sf.openSession();
+        int i = 0;
         try {
             session.beginTransaction();
-            session.createQuery(UPDATE)
+            i = session.createQuery(UPDATE)
                     .setParameter("fLogin", user.getLogin())
                     .setParameter("fPassword", user.getPassword())
                     .setParameter("fId", user.getId())
@@ -63,8 +65,10 @@ public class UserRepository {
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
+        } finally {
+            session.close();
         }
-        session.close();
+        return i != 0;
     }
 
     /**
@@ -72,18 +76,21 @@ public class UserRepository {
      *
      * @param userId ID
      */
-    public void delete(int userId) {
+    public boolean delete(int userId) {
         Session session = sf.openSession();
+        int i = 0;
         try {
             session.beginTransaction();
-            session.createQuery(DELETE)
+            i = session.createQuery(DELETE)
                     .setParameter("fId", userId)
                     .executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
+        } finally {
+            session.close();
         }
-        session.close();
+        return i != 0;
     }
 
     /**
@@ -108,7 +115,7 @@ public class UserRepository {
         Session session = sf.openSession();
         Query<User> query = session.createQuery(FIND_BY_ID, User.class)
                 .setParameter("fId", userId);
-        Optional<User> userOptional = Optional.ofNullable(query.uniqueResult());
+        Optional<User> userOptional = query.uniqueResultOptional();
         session.close();
         return userOptional;
     }
@@ -138,7 +145,7 @@ public class UserRepository {
         Session session = sf.openSession();
         Query<User> query = session.createQuery(FIND_BY_LOGIN, User.class)
                 .setParameter("fLogin", login);
-        Optional<User> userOptional = Optional.ofNullable(query.uniqueResult());
+        Optional<User> userOptional = query.uniqueResultOptional();
         session.close();
         return userOptional;
     }
