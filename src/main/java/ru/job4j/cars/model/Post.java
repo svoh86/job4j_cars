@@ -23,18 +23,36 @@ import java.util.List;
 @Entity
 @Table(name = "auto_post")
 public class Post {
+    /**
+     * Идентификатор объявления
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
+    /**
+     * Текст объявления
+     */
     private String text;
+    /**
+     * Дата создания объявления
+     */
     private LocalDateTime created = LocalDateTime.now();
+    /**
+     * Внешний ключ на пользователя
+     */
     @ManyToOne
     @JoinColumn(name = "auto_user_id")
     private User user;
+    /**
+     * История изменения цены
+     */
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
     private List<PriceHistory> priceHistory;
+    /**
+     * Подписки на объявление
+     */
     @ManyToMany
     @JoinTable(
             name = "participates",
@@ -42,6 +60,12 @@ public class Post {
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private List<User> participates = new ArrayList<>();
+    /**
+     * Внешний ключ на автомобиль
+     */
+    @ManyToOne
+    @JoinColumn(name = "car_id")
+    private Car car;
 
     public Post(String text) {
         this.text = text;
