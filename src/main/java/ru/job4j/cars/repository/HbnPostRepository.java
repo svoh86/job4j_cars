@@ -20,9 +20,16 @@ public class HbnPostRepository implements PostRepository {
     private final CrudRepository crudRepository;
     private static final String DELETE = "DELETE Post WHERE id = :fId";
     private static final String FIND_ALL_ORDER_BY_ID = "FROM Post p JOIN FETCH p.priceHistory"
-                                                       + " JOIN FETCH p.participates ORDER BY id";
+            + " JOIN FETCH p.participates ORDER BY id";
     private static final String FIND_BY_ID = "FROM Post p JOIN FETCH p.priceHistory"
-                                             + " JOIN FETCH p.participates WHERE id = :fId";
+            + " JOIN FETCH p.participates WHERE id = :fId";
+    private static final String FIND_FOR_LAST_DAY = "FROM Post p JOIN FETCH p.priceHistory"
+            + " JOIN FETCH p.participates WHERE p.created > CURRENT_DATE - 1";
+
+    private static final String FIND_WITH_PHOTO = "FROM Post p JOIN FETCH p.priceHistory"
+            + " JOIN FETCH p.participates WHERE p.photo IS NOT NULL";
+    private static final String FIND_BY_CAR_NAME = "FROM Post p JOIN FETCH p.priceHistory"
+            + " JOIN FETCH p.participates WHERE car_id IN (SELECT id FROM Car WHERE name = :fName)";
 
     /**
      * Сохранить в базе.
@@ -79,5 +86,32 @@ public class HbnPostRepository implements PostRepository {
         return crudRepository.optional(FIND_BY_ID,
                 Post.class,
                 Map.of("fId", postId));
+    }
+
+    /**
+     * Найти объявления за последний день.
+     *
+     * @return список объявлений.
+     */
+    @Override
+    public List<Post> findForLastDay() {
+        return crudRepository.query(FIND_FOR_LAST_DAY, Post.class);
+    }
+
+    /**
+     * Найти объявления с фото
+     *
+     * @return список объявлений.
+     */
+    @Override
+    public List<Post> findWithPhoto() {
+        return crudRepository.query(FIND_WITH_PHOTO, Post.class);
+    }
+
+    @Override
+    public List<Post> findByCarName(String carName) {
+        return crudRepository.query(FIND_BY_CAR_NAME,
+                Post.class,
+                Map.of("fName", carName));
     }
 }

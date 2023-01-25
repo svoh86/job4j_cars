@@ -17,4 +17,5 @@
     <include file="scripts/010_ddl_add_column_car_id_in_auto_post_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/011_ddl_drop_column_created_in_auto_post_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/012_ddl_add_column_created_in_auto_post_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/013_ddl_add_column_photo_in_auto_post_table.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

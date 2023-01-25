@@ -13,13 +13,19 @@ import java.util.Optional;
  */
 
 public interface PostRepository {
-    public Post create(Post post);
+    Post create(Post post);
 
-    public void update(Post post);
+    void update(Post post);
 
-    public void delete(int postId);
+    void delete(int postId);
 
-    public List<Post> findAllOrderById();
+    List<Post> findAllOrderById();
 
-    public Optional<Post> findById(int postId);
+    Optional<Post> findById(int postId);
+
+    List<Post> findForLastDay();
+
+    List<Post> findWithPhoto();
+
+    List<Post> findByCarName(String carName);
 }
