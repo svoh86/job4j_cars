@@ -19,8 +19,8 @@ import java.util.Optional;
 public class HbnCarRepository implements CarRepository {
     private final CrudRepository crudRepository;
     private static final String DELETE = "DELETE Car WHERE id = :fId";
-    private static final String FIND_ALL_ORDER_BY_ID = "FROM Car c JOIN FETCH c.owners ORDER BY id";
-    private static final String FIND_BY_ID = "FROM Car c JOIN FETCH c.owners WHERE id = :fId";
+    private static final String FIND_ALL_ORDER_BY_ID = "FROM Car c JOIN FETCH c.owners ORDER BY c.id";
+    private static final String FIND_BY_ID = "FROM Car c JOIN FETCH c.owners WHERE c.id = :fId";
 
     /**
      * Сохранить в базе.
