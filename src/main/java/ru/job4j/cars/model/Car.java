@@ -54,4 +54,9 @@ public class Car {
             inverseJoinColumns = {@JoinColumn(name = "driver_id")}
     )
     private Set<Driver> owners;
+
+    @Override
+    public String toString() {
+        return "Car{" + "id=" + id + ", name='" + name + '\'' + ", engine=" + engine + ", driver=" + driver + '}';
+    }
 }

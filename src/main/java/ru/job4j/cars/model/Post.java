@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,6 +39,7 @@ public class Post {
     /**
      * Дата создания объявления
      */
+    @EqualsAndHashCode.Exclude
     private LocalDateTime created = LocalDateTime.now();
     /**
      * Внешний ключ на пользователя
@@ -49,6 +52,7 @@ public class Post {
      */
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PriceHistory> priceHistory;
     /**
      * Подписки на объявление

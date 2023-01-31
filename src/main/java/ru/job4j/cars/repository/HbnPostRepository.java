@@ -18,18 +18,27 @@ import java.util.Optional;
 @AllArgsConstructor
 public class HbnPostRepository implements PostRepository {
     private final CrudRepository crudRepository;
-    private static final String DELETE = "DELETE Post WHERE id = :fId";
-    private static final String FIND_ALL_ORDER_BY_ID = "FROM Post p JOIN FETCH p.priceHistory"
-            + " JOIN FETCH p.participates ORDER BY p.id";
-    private static final String FIND_BY_ID = "FROM Post p JOIN FETCH p.priceHistory"
+    private static final String DELETE = "DELETE Post p WHERE p.id = :fId";
+    private static final String FIND_ALL_ORDER_BY_ID_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.priceHistory";
+    private static final String FIND_ALL_ORDER_BY_ID_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.participates WHERE p IN :fPosts ORDER BY p.id";
+    private static final String FIND_BY_ID_JOIN_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
             + " JOIN FETCH p.participates WHERE p.id = :fId";
-    private static final String FIND_FOR_LAST_DAY = "FROM Post p JOIN FETCH p.priceHistory"
-            + " JOIN FETCH p.participates WHERE p.created > CURRENT_DATE - 1";
-
-    private static final String FIND_WITH_PHOTO = "FROM Post p JOIN FETCH p.priceHistory"
-            + " JOIN FETCH p.participates WHERE p.photo IS NOT NULL";
-    private static final String FIND_BY_CAR_NAME = "FROM Post p JOIN FETCH p.priceHistory"
-            + " JOIN FETCH p.participates WHERE p.car_id IN (SELECT id FROM Car WHERE name = :fName)";
+    private static final String FIND_BY_ID_JOIN_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.priceHistory WHERE p.id = :fId";
+    private static final String FIND_FOR_LAST_DAY_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.priceHistory WHERE p.created > CURRENT_DATE - 1";
+    private static final String FIND_FOR_LAST_DAY_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.participates WHERE p IN :fPosts";
+    private static final String FIND_WITH_PHOTO_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.priceHistory WHERE p.photo IS NOT NULL";
+    private static final String FIND_WITH_PHOTO_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.participates WHERE p IN :fPosts";
+    private static final String FIND_BY_CAR_NAME_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.priceHistory WHERE p.car.id IN (SELECT c.id FROM Car c WHERE c.name = :fName)";
+    private static final String FIND_BY_CAR_NAME_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.participates WHERE p IN :fPosts";
 
     /**
      * Сохранить в базе.
@@ -73,7 +82,11 @@ public class HbnPostRepository implements PostRepository {
      */
     @Override
     public List<Post> findAllOrderById() {
-        return crudRepository.query(FIND_ALL_ORDER_BY_ID, Post.class);
+        return crudRepository.queryMultiple(
+                FIND_ALL_ORDER_BY_ID_PRICE_HISTORY,
+                FIND_ALL_ORDER_BY_ID_PARTICIPATES,
+                Post.class,
+                "fPosts");
     }
 
     /**
@@ -83,7 +96,7 @@ public class HbnPostRepository implements PostRepository {
      */
     @Override
     public Optional<Post> findById(int postId) {
-        return crudRepository.optional(FIND_BY_ID,
+        return crudRepository.optionalMultiple(FIND_BY_ID_JOIN_PARTICIPATES, FIND_BY_ID_JOIN_PRICE_HISTORY,
                 Post.class,
                 Map.of("fId", postId));
     }
@@ -95,7 +108,11 @@ public class HbnPostRepository implements PostRepository {
      */
     @Override
     public List<Post> findForLastDay() {
-        return crudRepository.query(FIND_FOR_LAST_DAY, Post.class);
+        return crudRepository.queryMultiple(
+                FIND_FOR_LAST_DAY_PRICE_HISTORY,
+                FIND_FOR_LAST_DAY_PARTICIPATES,
+                Post.class,
+                "fPosts");
     }
 
     /**
@@ -105,13 +122,20 @@ public class HbnPostRepository implements PostRepository {
      */
     @Override
     public List<Post> findWithPhoto() {
-        return crudRepository.query(FIND_WITH_PHOTO, Post.class);
+        return crudRepository.queryMultiple(
+                FIND_WITH_PHOTO_PRICE_HISTORY,
+                FIND_WITH_PHOTO_PARTICIPATES,
+                Post.class,
+                "fPosts");
     }
 
     @Override
     public List<Post> findByCarName(String carName) {
-        return crudRepository.query(FIND_BY_CAR_NAME,
+        return crudRepository.queryMultiple(
+                FIND_BY_CAR_NAME_PRICE_HISTORY,
+                FIND_BY_CAR_NAME_PARTICIPATES,
                 Post.class,
-                Map.of("fName", carName));
+                Map.of("fName", carName),
+                "fPosts");
     }
 }

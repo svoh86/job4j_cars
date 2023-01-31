@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -80,6 +81,37 @@ public class CrudRepository {
     }
 
     /**
+     * Метод принимает два запроса, класс объекта и Map с параметрами запроса.
+     * Далее создается команда, которую передаем на выполнение в метод tx().
+     *
+     * @param query  запрос
+     * @param query2 запрос2
+     * @param cl     класс объекта
+     * @param args   Map с параметрами запроса
+     * @param <T>    общий тип
+     * @return Optional
+     */
+    public <T> Optional<T> optionalMultiple(String query, String query2, Class<T> cl, Map<String, Object> args) {
+        Function<Session, Optional<T>> command = session -> {
+            var sq = session.createQuery(query, cl);
+            for (Map.Entry<String, Object> arg : args.entrySet()) {
+                sq.setParameter(arg.getKey(), arg.getValue());
+            }
+            Optional<T> t = sq.uniqueResultOptional();
+            if (t.isPresent()) {
+                var sq2 = session.createQuery(query2, cl);
+                for (Map.Entry<String, Object> arg : args.entrySet()) {
+                    sq2.setParameter(arg.getKey(), arg.getValue());
+                }
+                return sq2.uniqueResultOptional();
+            } else {
+                return t;
+            }
+        };
+        return tx(command);
+    }
+
+    /**
      * Метод принимает запрос и класс объекта
      * Далее создается команда, которую передаем на выполнение в метод tx().
      *
@@ -92,6 +124,54 @@ public class CrudRepository {
         Function<Session, List<T>> command = session -> session
                 .createQuery(query, cl)
                 .list();
+        return tx(command);
+    }
+
+    /**
+     * Метод принимает два запроса, класс объекта и параметр запроса.
+     * Далее создается команда, которую передаем на выполнение в метод tx().
+     *
+     * @param query  запрос
+     * @param query2 запрос2
+     * @param cl     класс объекта
+     * @param arg    параметр
+     * @param <T>    общий тип
+     * @return список объектов типа Т
+     */
+    public <T> List<T> queryMultiple(String query, String query2, Class<T> cl, String arg) {
+        Function<Session, List<T>> command = session -> {
+            var sq = session.createQuery(query, cl);
+            List<T> list = sq.list();
+            var sq2 = session.createQuery(query2, cl);
+            sq2.setParameter(arg, list);
+            return sq2.list();
+        };
+        return tx(command);
+    }
+
+    /**
+     * Метод принимает два запроса, класс объекта, Map с параметрами запроса и параметр запроса.
+     * Далее создается команда, которую передаем на выполнение в метод tx()
+     *
+     * @param query  запрос
+     * @param query2 запрос2
+     * @param cl     класс объекта
+     * @param args   Map с параметрами запроса
+     * @param s      параметр
+     * @param <T>    общий тип
+     * @return список объектов типа Т
+     */
+    public <T> List<T> queryMultiple(String query, String query2, Class<T> cl, Map<String, Object> args, String s) {
+        Function<Session, List<T>> command = session -> {
+            var sq = session.createQuery(query, cl);
+            for (Map.Entry<String, Object> arg : args.entrySet()) {
+                sq.setParameter(arg.getKey(), arg.getValue());
+            }
+            List<T> list = sq.list();
+            var sq2 = session.createQuery(query2, cl);
+            sq2.setParameter(s, list);
+            return sq2.list();
+        };
         return tx(command);
     }
 
@@ -132,7 +212,7 @@ public class CrudRepository {
     public <T> T tx(Function<Session, T> command) {
         Session session = sf.openSession();
         Transaction tx = null;
-        try (session) {
+        try {
             tx = session.beginTransaction();
             T rsl = command.apply(session);
             tx.commit();
@@ -142,6 +222,8 @@ public class CrudRepository {
                 tx.rollback();
             }
             throw e;
+        } finally {
+            session.close();
         }
     }
 }

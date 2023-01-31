@@ -8,8 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.job4j.cars.model.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +31,6 @@ class HbnPostRepositoryTest {
     private final Car car = new Car();
     private final Engine engine = new Engine();
     private final Driver driver = new Driver();
-
 
     @BeforeEach
     private void beforeEach() {
@@ -61,8 +60,8 @@ class HbnPostRepositoryTest {
 
         post.setPriceHistory(List.of(priceHistory));
         postRepository.create(post);
-        Optional<Post> byId = postRepository.findById(post.getId());
-        assertThat(post).isEqualTo(byId.get());
+        Post byId = postRepository.findById(post.getId()).get();
+        assertThat(post).isEqualTo(byId);
     }
 
     @Test
@@ -81,9 +80,130 @@ class HbnPostRepositoryTest {
         post2.setUser(user);
         post2.setCar(car);
         post2.setParticipates(List.of(user));
-        post2.setPriceHistory(List.of(priceHistory));
+        PriceHistory priceHistory2 = new PriceHistory();
+        priceHistory2.setBefore(300L);
+        priceHistory2.setAfter(400L);
+        post2.setPriceHistory(List.of(priceHistory2));
         postRepository.create(post2);
         List<Post> postList = List.of(post, post2);
         assertThat(postRepository.findAllOrderById()).isEqualTo(postList);
     }
+
+    @Test
+    public void whenUpdate() {
+        Post post = new Post("New post");
+        post.setUser(user);
+        post.setCar(car);
+        post.setParticipates(List.of(user));
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setBefore(100L);
+        priceHistory.setAfter(200L);
+        post.setPriceHistory(List.of(priceHistory));
+        postRepository.create(post);
+        post.setText("Update");
+        postRepository.update(post);
+        assertThat(postRepository.findById(post.getId()).get().getText()).isEqualTo("Update");
+    }
+
+    @Test
+    public void whenDelete() {
+        Post post = new Post("New post");
+        post.setUser(user);
+        post.setCar(car);
+        post.setParticipates(List.of(user));
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setBefore(100L);
+        priceHistory.setAfter(200L);
+        post.setPriceHistory(List.of(priceHistory));
+        postRepository.create(post);
+        postRepository.delete(post.getId());
+        assertThat(postRepository.findById(post.getId()).isEmpty()).isTrue();
+    }
+
+    @Test
+    public void whenFindForLastDay() {
+        Post post = new Post("post");
+        post.setUser(user);
+        post.setCar(car);
+        post.setCreated(LocalDateTime.now().minusDays(5));
+        post.setParticipates(List.of(user));
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setBefore(100L);
+        priceHistory.setAfter(200L);
+        post.setPriceHistory(List.of(priceHistory));
+        postRepository.create(post);
+
+        Post post2 = new Post();
+        post2.setUser(user);
+        post2.setCar(car);
+        post2.setParticipates(List.of(user));
+        PriceHistory priceHistory2 = new PriceHistory();
+        priceHistory2.setBefore(300L);
+        priceHistory2.setAfter(400L);
+        post2.setPriceHistory(List.of(priceHistory2));
+        postRepository.create(post2);
+        List<Post> postList = List.of(post2);
+        assertThat(postRepository.findForLastDay()).isEqualTo(postList);
+    }
+
+    @Test
+    public void whenFindWithPhoto() {
+        Post post = new Post("post");
+        post.setUser(user);
+        post.setCar(car);
+        post.setPhoto(new byte[1]);
+        post.setParticipates(List.of(user));
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setBefore(100L);
+        priceHistory.setAfter(200L);
+        post.setPriceHistory(List.of(priceHistory));
+        postRepository.create(post);
+
+        Post post2 = new Post();
+        post2.setUser(user);
+        post2.setCar(car);
+        post2.setParticipates(List.of(user));
+        PriceHistory priceHistory2 = new PriceHistory();
+        priceHistory2.setBefore(300L);
+        priceHistory2.setAfter(400L);
+        post2.setPriceHistory(List.of(priceHistory2));
+        postRepository.create(post2);
+        List<Post> postList = List.of(post);
+        assertThat(postRepository.findWithPhoto()).isEqualTo(postList);
+    }
+
+    @Test
+    public void whenFindByCarName() {
+        Post post = new Post("post");
+        post.setUser(user);
+        post.setCar(car);
+        post.setPhoto(new byte[1]);
+        post.setParticipates(List.of(user));
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setBefore(100L);
+        priceHistory.setAfter(200L);
+        post.setPriceHistory(List.of(priceHistory));
+        postRepository.create(post);
+
+        Car car2 = new Car();
+        car2.setName("AUDI");
+        car2.setDriver(driver);
+        car2.setEngine(engine);
+        car2.setOwners(Set.of(driver));
+        carRepository.create(car2);
+
+        Post post2 = new Post();
+        post2.setUser(user);
+        post2.setCar(car2);
+        post2.setParticipates(List.of(user));
+        PriceHistory priceHistory2 = new PriceHistory();
+        priceHistory2.setBefore(300L);
+        priceHistory2.setAfter(400L);
+        post2.setPriceHistory(List.of(priceHistory2));
+        postRepository.create(post2);
+        List<Post> postList = List.of(post2);
+        assertThat(postRepository.findByCarName("AUDI")).isEqualTo(postList);
+    }
+
+
 }
