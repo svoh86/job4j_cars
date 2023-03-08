@@ -74,6 +74,15 @@ public class Post {
      * Фото автомобиля
      */
     private byte[] photo;
+    /**
+     * Статус объеявления
+     */
+    @EqualsAndHashCode.Exclude
+    private boolean status = true;
+    /**
+     * Цена автомобиля
+     */
+    private Long price;
 
     public Post(String text) {
         this.text = text;

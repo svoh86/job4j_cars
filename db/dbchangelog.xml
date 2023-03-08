@@ -18,4 +18,6 @@
     <include file="scripts/011_ddl_drop_column_created_in_auto_post_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/012_ddl_add_column_created_in_auto_post_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/013_ddl_add_column_photo_in_auto_post_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/014_ddl_add_column_status_in_auto_post_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/015_ddl_add_column_price_in_auto_post_table.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
