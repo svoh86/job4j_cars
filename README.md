@@ -34,7 +34,7 @@ Web-приложение "АвтоМаг". Сервис для продажи м
 указанными в src/main/resources/db.properties, или заменить на свои параметры.
 
 Варианты запуска приложения:
-1. Упаковать проект в jar архив (job4j_cinema/target/job4j_cars-1.0.jar):
+1. Упаковать проект в jar архив (job4j_cars/target/job4j_cars-1.0.jar):
 ``` 
 mvn package
 ``` 
