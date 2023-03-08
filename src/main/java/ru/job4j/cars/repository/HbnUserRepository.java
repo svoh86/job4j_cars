@@ -28,22 +28,23 @@ public class HbnUserRepository implements UserRepository {
      * Сохранить в базе.
      *
      * @param user пользователь.
-     * @return пользователь с id.
+     * @return Optional пользователя с id.
      */
     @Override
-    public User create(User user) {
+    public Optional<User> create(User user) {
         crudRepository.run(session -> session.persist(user));
-        return user;
+        return Optional.ofNullable(user);
     }
 
     /**
      * Обновить в базе пользователя.
      *
-     * @param user пользователь.
+     * @param user пользователь
+     * @return boolean
      */
     @Override
-    public void update(User user) {
-        crudRepository.run(session -> session.merge(user));
+    public boolean update(User user) {
+        return crudRepository.condition(session -> user.equals(session.merge(user)));
     }
 
     /**
@@ -52,8 +53,8 @@ public class HbnUserRepository implements UserRepository {
      * @param userId ID
      */
     @Override
-    public void delete(int userId) {
-        crudRepository.run(
+    public boolean delete(int userId) {
+      return crudRepository.condition(
                 DELETE,
                 Map.of("fId", userId)
         );

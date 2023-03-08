@@ -13,17 +13,17 @@ import java.util.Optional;
  */
 
 public interface UserRepository {
-    public User create(User user);
+    Optional<User> create(User user);
 
-    public void update(User user);
+    boolean update(User user);
 
-    public void delete(int userId);
+    boolean delete(int userId);
 
-    public List<User> findAllOrderById();
+    List<User> findAllOrderById();
 
-    public Optional<User> findById(int userId);
+    Optional<User> findById(int userId);
 
-    public List<User> findByLikeLogin(String key);
+    List<User> findByLikeLogin(String key);
 
-    public Optional<User> findByLogin(String login);
+    Optional<User> findByLogin(String login);
 }
