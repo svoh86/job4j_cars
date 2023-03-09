@@ -62,7 +62,10 @@
             </thead>
             <tbody>
             <tr class="table-secondary" th:each="post:${posts}">
-                <td th:text="${post.photo}"/>
+                <td>
+                    <span th:if="${post.getPhoto().length == 0}">Фото отсутствует</span>
+                    <img th:width="100" th:high="100" th:src="@{|/posts/photoCar/${post.id}|}">
+                </td>
                 <td th:text="${post.text}"/>
                 <td th:text="${post.price}"/>
                 <td th:text="${#temporals.format(post.created, 'dd-MM-yyyy HH:mm')}"/>
