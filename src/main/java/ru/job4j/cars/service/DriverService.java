@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface DriverService {
     Driver add(String driverName, User user);
 
-    void update(Driver driver);
+    boolean update(Driver driver);
 
     void delete(int id);
 

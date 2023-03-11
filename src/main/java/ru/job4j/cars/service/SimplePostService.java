@@ -40,13 +40,21 @@ public class SimplePostService implements PostService {
     }
 
     @Override
-    public boolean update(Post post) {
-        return false;
+    public boolean update(Post post, Car car, MultipartFile file) {
+        post.setCar(car);
+        try {
+            post.setPhoto(file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при загрузке фото", e);
+        }
+        return postRepository.update(post);
     }
 
     @Override
-    public boolean delete(int id) {
-        return false;
+    public boolean delete(Post post) {
+        postRepository.delete(post);
+        Optional<Post> optionalPost = postRepository.findById(post.getId());
+        return optionalPost.isEmpty();
     }
 
     @Override
@@ -61,6 +69,16 @@ public class SimplePostService implements PostService {
 
     @Override
     public List<Post> findForLastDay() {
-        return null;
+        return postRepository.findForLastDay();
+    }
+
+    @Override
+    public List<Post> findByUserId(int userId) {
+        return postRepository.findByUserId(userId);
+    }
+
+    @Override
+    public boolean isSale(int postId) {
+        return postRepository.isSale(postId);
     }
 }

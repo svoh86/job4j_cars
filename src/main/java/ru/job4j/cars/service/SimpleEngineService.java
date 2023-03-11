@@ -24,8 +24,8 @@ public class SimpleEngineService implements EngineService {
     }
 
     @Override
-    public void update(Engine engine) {
-        engineRepository.update(engine);
+    public boolean update(Engine engine) {
+        return engineRepository.update(engine);
     }
 
     @Override

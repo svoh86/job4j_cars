@@ -46,34 +46,48 @@
     </nav>
     <div class="row">
         <table class="table table-bordered">
-            <col style="width:25%">
-            <col style="width:30%">
-            <col style="width:15%">
-            <col style="width:15%">
-            <col style="width:15%">
+            <col style="width:50%">
+            <col style="width:50%">
             <thead>
             <tr class="table-primary">
                 <th scope="col">Фото</th>
                 <th scope="col">Описание</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="table-secondary">
+                <td>
+                    <span th:if="${post.getPhoto().length == 0}">Фото отсутствует</span>
+                    <img th:width="500" th:high="500" th:src="@{|/posts/photoCar/${post.id}|}">
+                </td>
+                <td th:text="${post.text}"/>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered">
+            <col style="width:18%">
+            <col style="width:18%">
+            <col style="width:18%">
+            <col style="width:18%">
+            <col style="width:18%">
+            <col style="width:10%">
+            <thead>
+            <tr class="table-primary">
+                <th scope="col">Марка автомобиля</th>
+                <th scope="col">Объем двигателя</th>
                 <th scope="col">Цена</th>
+                <th scope="col">Имя владельца</th>
                 <th scope="col">Дата</th>
                 <th scope="col">Статус</th>
             </tr>
             </thead>
             <tbody>
-            <tr class="table-secondary" th:each="post:${posts}">
-                <td>
-                    <a th:href="@{|/posts/${post.id}|}">
-                    <span th:if="${post.getPhoto().length == 0}">Фото отсутствует</span>
-                    <img th:width="100" th:high="100" th:src="@{|/posts/photoCar/${post.id}|}">
-                    </a>
-                </td>
-                <td>
-                    <a th:href="@{|/posts/${post.id}|}">
-                   <span th:text="${post.text}"/>
-                    </a>
-                </td>
+            <tr class="table-secondary">
+                <td th:text="${post.car.name}"/>
+                <td th:text="${post.car.engine.name}"/>
                 <td th:text="${post.price}"/>
+                <td th:text="${post.car.driver.name}"/>
                 <td th:text="${#temporals.format(post.created, 'dd-MM-yyyy HH:mm')}"/>
                 <td>
                     <span th:if="${post.status}">

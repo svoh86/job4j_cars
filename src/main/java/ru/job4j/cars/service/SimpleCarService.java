@@ -28,8 +28,8 @@ public class SimpleCarService implements CarService {
     }
 
     @Override
-    public void update(Car car) {
-        carRepository.update(car);
+    public boolean update(Car car) {
+        return carRepository.update(car);
     }
 
     @Override

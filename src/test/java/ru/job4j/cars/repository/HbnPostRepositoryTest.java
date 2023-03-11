@@ -116,7 +116,7 @@ class HbnPostRepositoryTest {
         priceHistory.setAfter(200L);
         post.setPriceHistory(List.of(priceHistory));
         postRepository.create(post);
-        postRepository.delete(post.getId());
+        postRepository.delete(post);
         assertThat(postRepository.findById(post.getId()).isEmpty()).isTrue();
     }
 

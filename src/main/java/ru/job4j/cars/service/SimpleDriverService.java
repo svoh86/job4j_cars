@@ -3,6 +3,7 @@ package ru.job4j.cars.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Driver;
+import ru.job4j.cars.model.Post;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.DriverRepository;
 
@@ -26,8 +27,8 @@ public class SimpleDriverService implements DriverService {
     }
 
     @Override
-    public void update(Driver driver) {
-        driverRepository.update(driver);
+    public boolean update(Driver driver) {
+        return driverRepository.update(driver);
     }
 
     @Override

@@ -38,10 +38,11 @@ public class HbnCarRepository implements CarRepository {
      * Обновить в базе автомобиль.
      *
      * @param car автомобиль.
+     * @return boolean
      */
     @Override
-    public void update(Car car) {
-        crudRepository.run(session -> session.merge(car));
+    public boolean update(Car car) {
+        return crudRepository.condition(session -> car.equals(session.merge(car)));
     }
 
     /**

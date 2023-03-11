@@ -15,9 +15,9 @@ import java.util.Optional;
 public interface PostRepository {
     Post create(Post post);
 
-    void update(Post post);
+    boolean update(Post post);
 
-    void delete(int postId);
+    void delete(Post post);
 
     List<Post> findAllOrderById();
 
@@ -28,4 +28,8 @@ public interface PostRepository {
     List<Post> findWithPhoto();
 
     List<Post> findByCarName(String carName);
+
+    List<Post> findByUserId(int userId);
+
+    boolean isSale(int id);
 }

@@ -38,10 +38,11 @@ public class HbnEngineRepository implements EngineRepository {
      * Обновить в базе двигатель.
      *
      * @param engine двигатель.
+     * @return boolean
      */
     @Override
-    public void update(Engine engine) {
-        crudRepository.run(session -> session.merge(engine));
+    public boolean update(Engine engine) {
+        return crudRepository.condition(session -> engine.equals(session.merge(engine)));
     }
 
     /**

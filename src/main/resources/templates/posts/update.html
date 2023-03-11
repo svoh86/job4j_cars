@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <title>Cars</title>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" th:href="@{/posts}">Cars</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav" align="center">
+                <a class="nav-item nav-link" th:href="@{/posts}">Все объявления</a>
+                <a class="nav-item nav-link" th:href="@{/posts/myPosts}">Мои объявления</a>
+                <a class="nav-item nav-link" th:href="@{/posts/add}">Добавить объявление</a>
+                <a class="nav-item nav-link" th:if="${user.login == 'Гость!'}" th:href="@{/user/loginPage}">
+                    <span th:text="${user.login}"></span>
+                    <span> | Войти</span>
+                </a>
+                <a class="nav-item nav-link" th:if="${user.login != 'Гость!'}" th:href="@{/user/logout}">
+                    <span th:text="${user.login}"></span>
+                    <span> | Выйти</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="row">
+        <div class="card" style="width: 100%">
+            <div class="card-header">
+                Редактировать объявление
+            </div>
+            <div class="card-body">
+                <form th:action="@{/posts/update}" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Текст объявления</label>
+                        <input type="text" class="form-control" placeholder="Текст объявления" name="text"
+                               th:field="${post.text}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Цена</label>
+                        <input type="text" class="form-control" placeholder="Цена" name="price"
+                               th:field="${post.price}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="car.name">Марка автомобиля</label>
+                        <input type="text" class="form-control" placeholder="Марка автомобиля" id="car.name" name="car.name"
+                               th:field="${post.car.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="engine.name">Объем двигателя</label>
+                        <input type="text" class="form-control" placeholder="Объем двигателя" id="engine.name" name="engine.name"
+                               th:field="${post.car.engine.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="driver.name">Имя владельца</label>
+                        <input type="text" class="form-control" placeholder="Имя владельца" id="driver.name" name="driver.name"
+                               th:field="${post.car.driver.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Фотография автомобиля</label>
+                        <input type="file" class="form-control" name="file" id="file">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Обновить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

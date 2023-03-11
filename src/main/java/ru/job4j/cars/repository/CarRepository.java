@@ -13,13 +13,13 @@ import java.util.Optional;
  */
 
 public interface CarRepository {
-    public Car create(Car car);
+    Car create(Car car);
 
-    public void update(Car car);
+    boolean update(Car car);
 
-    public void delete(int carId);
+    void delete(int carId);
 
-    public List<Car> findAllOrderById();
+    List<Car> findAllOrderById();
 
-    public Optional<Car> findById(int carId);
+    Optional<Car> findById(int carId);
 }

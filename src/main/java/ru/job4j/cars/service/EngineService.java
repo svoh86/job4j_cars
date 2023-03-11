@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface EngineService {
     Engine add(String engineName);
 
-    void update(Engine engine);
+    boolean update(Engine engine);
 
     void delete(int id);
 

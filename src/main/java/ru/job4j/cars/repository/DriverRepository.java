@@ -13,13 +13,13 @@ import java.util.Optional;
  */
 
 public interface DriverRepository {
-    public Driver create(Driver driver);
+    Driver create(Driver driver);
 
-    public void update(Driver driver);
+    boolean update(Driver driver);
 
-    public void delete(int driverId);
+    void delete(int driverId);
 
-    public List<Driver> findAllOrderById();
+    List<Driver> findAllOrderById();
 
-    public Optional<Driver> findById(int driverId);
+    Optional<Driver> findById(int driverId);
 }

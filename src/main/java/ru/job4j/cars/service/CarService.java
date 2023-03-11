@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface CarService {
     Car add(String carName, Engine engine, Driver driver);
 
-    void update(Car car);
+    boolean update(Car car);
 
     void delete(int id);
 

@@ -13,13 +13,13 @@ import java.util.Optional;
  */
 
 public interface EngineRepository {
-    public Engine create(Engine engine);
+    Engine create(Engine engine);
 
-    public void update(Engine engine);
+    boolean update(Engine engine);
 
-    public void delete(int engineId);
+    void delete(int engineId);
 
-    public List<Engine> findAllOrderById();
+    List<Engine> findAllOrderById();
 
-    public Optional<Engine> findById(int engineId);
+    Optional<Engine> findById(int engineId);
 }

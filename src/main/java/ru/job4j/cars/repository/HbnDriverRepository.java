@@ -38,10 +38,11 @@ public class HbnDriverRepository implements DriverRepository {
      * Обновить в базе владельца.
      *
      * @param driver владелец.
+     * @return boolean
      */
     @Override
-    public void update(Driver driver) {
-        crudRepository.run(session -> session.merge(driver));
+    public boolean update(Driver driver) {
+        return crudRepository.condition(session -> driver.equals(session.merge(driver)));
     }
 
     /**

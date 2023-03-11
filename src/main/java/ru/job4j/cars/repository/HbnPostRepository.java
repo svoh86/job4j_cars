@@ -18,7 +18,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class HbnPostRepository implements PostRepository {
     private final CrudRepository crudRepository;
-    private static final String DELETE = "DELETE Post p WHERE p.id = :fId";
     private static final String FIND_ALL_ORDER_BY_ID_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
             + " JOIN FETCH p.priceHistory";
     private static final String FIND_ALL_ORDER_BY_ID_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
@@ -39,6 +38,11 @@ public class HbnPostRepository implements PostRepository {
             + " JOIN FETCH p.priceHistory WHERE p.car.id IN (SELECT c.id FROM Car c WHERE c.name = :fName)";
     private static final String FIND_BY_CAR_NAME_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
             + " JOIN FETCH p.participates WHERE p IN :fPosts";
+    private static final String FIND_BY_USER_ID_JOIN_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.participates WHERE p.user.id = :fId";
+    private static final String FIND_BY_USER_ID_JOIN_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
+            + " JOIN FETCH p.priceHistory WHERE p IN :fPosts";
+    private static final String UPDATE_SALE = "UPDATE Post p SET p.status = false WHERE p.id = :fId";
 
     /**
      * Сохранить в базе.
@@ -56,23 +60,21 @@ public class HbnPostRepository implements PostRepository {
      * Обновить в базе объявление.
      *
      * @param post объявление.
+     * @return boolean
      */
     @Override
-    public void update(Post post) {
-        crudRepository.run(session -> session.merge(post));
+    public boolean update(Post post) {
+        return crudRepository.condition(session -> post.equals(session.merge(post)));
     }
 
     /**
-     * Удалить объявление по id.
+     * Удалить объявление.
      *
-     * @param postId ID
+     * @param post объявление
      */
     @Override
-    public void delete(int postId) {
-        crudRepository.run(
-                DELETE,
-                Map.of("fId", postId)
-        );
+    public void delete(Post post) {
+        crudRepository.run(session -> session.delete(post));
     }
 
     /**
@@ -96,7 +98,9 @@ public class HbnPostRepository implements PostRepository {
      */
     @Override
     public Optional<Post> findById(int postId) {
-        return crudRepository.optionalMultiple(FIND_BY_ID_JOIN_PARTICIPATES, FIND_BY_ID_JOIN_PRICE_HISTORY,
+        return crudRepository.optionalMultiple(
+                FIND_BY_ID_JOIN_PARTICIPATES,
+                FIND_BY_ID_JOIN_PRICE_HISTORY,
                 Post.class,
                 Map.of("fId", postId));
     }
@@ -129,6 +133,12 @@ public class HbnPostRepository implements PostRepository {
                 "fPosts");
     }
 
+    /**
+     * Найти все объявления по марке авто
+     *
+     * @param carName марка авто
+     * @return список объявлений
+     */
     @Override
     public List<Post> findByCarName(String carName) {
         return crudRepository.queryMultiple(
@@ -137,5 +147,28 @@ public class HbnPostRepository implements PostRepository {
                 Post.class,
                 Map.of("fName", carName),
                 "fPosts");
+    }
+
+    /**
+     * Найти все объявления конкретного пользователя
+     *
+     * @param userId id пользователя
+     * @return список объявлений
+     */
+    @Override
+    public List<Post> findByUserId(int userId) {
+        return crudRepository.queryMultiple(
+                FIND_BY_USER_ID_JOIN_PARTICIPATES,
+                FIND_BY_USER_ID_JOIN_PRICE_HISTORY,
+                Post.class,
+                Map.of("fId", userId),
+                "fPosts");
+    }
+
+    @Override
+    public boolean isSale(int id) {
+        return crudRepository.condition(
+                UPDATE_SALE,
+                Map.of("fId", id));
     }
 }

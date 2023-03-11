@@ -18,6 +18,7 @@ import ru.job4j.cars.service.PostService;
 import ru.job4j.cars.util.UserSession;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -67,6 +68,106 @@ public class PostController {
         return "redirect:/posts";
     }
 
+    @GetMapping("/{postId}")
+    public String viewPost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
+        UserSession.getUser(model, session);
+        Optional<Post> optionalPost = postService.findById(postId);
+        if (optionalPost.isEmpty()) {
+            model.addAttribute("message", "Объявление не существует!");
+            return "errorPage";
+        }
+        model.addAttribute("post", optionalPost.get());
+        return "posts/view";
+    }
+
+    @GetMapping("/myPosts")
+    public String myPosts(Model model, HttpSession session) {
+        User user = UserSession.getUser(model, session);
+        model.addAttribute("posts", postService.findByUserId(user.getId()));
+        return "posts/myPosts";
+    }
+
+    @GetMapping("delete/{postId}")
+    public String deletePost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
+        UserSession.getUser(model, session);
+        Optional<Post> optionalPost = postService.findById(postId);
+        if (optionalPost.isEmpty()) {
+            model.addAttribute("message", "Объявление не существует!");
+            return "errorPage";
+        }
+        postService.delete(optionalPost.get());
+        return "redirect:/posts/myPosts";
+    }
+
+    @GetMapping("edit/{postId}")
+    public String editPost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
+        UserSession.getUser(model, session);
+        Optional<Post> optionalPost = postService.findById(postId);
+        if (optionalPost.isEmpty()) {
+            model.addAttribute("message", "Объявление не существует!");
+            return "errorPage";
+        }
+        model.addAttribute("post", optionalPost.get());
+        return "posts/edit";
+    }
+
+    @GetMapping("isSale/{postId}")
+    public String isSale(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
+        UserSession.getUser(model, session);
+        Optional<Post> optionalPost = postService.findById(postId);
+        if (optionalPost.isEmpty()) {
+            model.addAttribute("message", "Объявление не существует!");
+            return "errorPage";
+        }
+        postService.isSale(postId);
+        return "posts/myPosts";
+    }
+
+    @GetMapping("update/{postId}")
+    public String updatePost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
+        UserSession.getUser(model, session);
+        Optional<Post> optionalPost = postService.findById(postId);
+        if (optionalPost.isEmpty()) {
+            model.addAttribute("message", "Объявление не существует!");
+            return "errorPage";
+        }
+        model.addAttribute("post", optionalPost.get());
+        session.setAttribute("post", optionalPost.get());
+        return "posts/update";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute Post post,
+                         @RequestParam(value = "car.name", required = false) String carName,
+                         @RequestParam("file") MultipartFile file,
+                         Model model, HttpSession session) {
+        User user = UserSession.getUser(model, session);
+        Post postSession = (Post) session.getAttribute("post");
+        Driver driver = postSession.getCar().getDriver();
+        driver.setName(post.getCar().getDriver().getName());
+        driverService.update(driver);
+        Engine engine = postSession.getCar().getEngine();
+        engine.setName(post.getCar().getEngine().getName());
+        engineService.update(engine);
+        Car car = postSession.getCar();
+        car.setDriver(driver);
+        car.setEngine(engine);
+        car.setName(carName);
+        carService.update(car);
+        List<PriceHistory> priceHistory = postSession.getPriceHistory();
+        priceHistory.add(new PriceHistory(postSession.getPrice(), post.getPrice()));
+        post.setId(postSession.getId());
+        post.setUser(user);
+        post.setPriceHistory(priceHistory);
+        post.setParticipates(postSession.getParticipates());
+        if (!postService.update(post, car, file)) {
+            model.addAttribute("message", "Объявление не обновлено!");
+            return "errorPage";
+        }
+        return "redirect:/posts/myPosts";
+    }
+
+
     /**
      * Метод, который будет возвращать файлы
      *
@@ -86,5 +187,4 @@ public class PostController {
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(new ByteArrayResource(optionalPost.get().getPhoto()));
     }
-
 }

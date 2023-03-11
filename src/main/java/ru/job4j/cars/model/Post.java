@@ -52,7 +52,6 @@ public class Post {
      */
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PriceHistory> priceHistory;
     /**
      * Подписки на объявление

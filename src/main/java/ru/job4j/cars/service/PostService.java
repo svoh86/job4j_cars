@@ -18,13 +18,17 @@ import java.util.Optional;
 public interface PostService {
     boolean add(Post post, User user, Car car, PriceHistory priceHistory, MultipartFile file);
 
-    boolean update(Post post);
+    boolean update(Post post, Car car, MultipartFile file);
 
-    boolean delete(int id);
+    boolean delete(Post post);
 
     List<Post> findAllOrderById();
 
     Optional<Post> findById(int id);
 
     List<Post> findForLastDay();
+
+    List<Post> findByUserId(int userId);
+
+    boolean isSale(int postId);
 }
