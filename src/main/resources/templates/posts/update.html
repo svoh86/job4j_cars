@@ -30,7 +30,7 @@
                 <a class="nav-item nav-link" th:href="@{/posts}">Все объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/myPosts}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/add}">Добавить объявление</a>
-                <a class="nav-item nav-link" th:href="@{/posts/today}">Объявления за сегодня</a>
+                <a class="nav-item nav-link" th:href="@{/posts/today}">Объявления за сутки</a>
                 <a class="nav-item nav-link" th:href="@{/posts/withPhoto}">Только с фото</a>
                 <a class="nav-item nav-link" th:if="${user.login == 'Гость!'}" th:href="@{/user/loginPage}">
                     <span th:text="${user.login}"></span>

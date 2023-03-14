@@ -175,7 +175,7 @@ public class PostController {
      * @param model   Model
      * @param session HttpSession
      * @param postId  id объявления
-     * @return posts/myPosts или errorPage
+     * @return redirect:/posts/myPosts или errorPage
      */
     @GetMapping("isSale/{postId}")
     public String isSale(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
@@ -186,7 +186,7 @@ public class PostController {
             return "errorPage";
         }
         postService.isSale(postId);
-        return "posts/myPosts";
+        return "redirect:/posts/myPosts";
     }
 
     /**
@@ -252,7 +252,7 @@ public class PostController {
     }
 
     /**
-     * Показывает страницу с объявлениями за сегодня
+     * Показывает страницу с объявлениями за сутки
      *
      * @param model   Model
      * @param session HttpSession
