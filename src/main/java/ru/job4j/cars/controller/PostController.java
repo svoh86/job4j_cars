@@ -36,6 +36,13 @@ public class PostController {
     private final DriverService driverService;
     private final EngineService engineService;
 
+    /**
+     * Показывает основную страницу со всеми объявлениями
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @return posts/posts
+     */
     @GetMapping
     public String posts(Model model, HttpSession session) {
         UserSession.getUser(model, session);
@@ -43,12 +50,31 @@ public class PostController {
         return "posts/posts";
     }
 
+    /**
+     * Показывает страницу с формой добавления объявления
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @return posts/add
+     */
     @GetMapping("/add")
     public String add(Model model, HttpSession session) {
         UserSession.getUser(model, session);
         return "posts/add";
     }
 
+    /**
+     * Добавляет данные из формы в БД
+     *
+     * @param post       объявление
+     * @param carName    марка авто
+     * @param engineName объем двигателя
+     * @param driverName имя владельца
+     * @param file       MultipartFile
+     * @param model      Model
+     * @param session    HttpSession
+     * @return redirect:/posts или errorPage
+     */
     @PostMapping("/create")
     public String create(@ModelAttribute Post post,
                          @RequestParam(value = "car.name", required = false) String carName,
@@ -68,6 +94,14 @@ public class PostController {
         return "redirect:/posts";
     }
 
+    /**
+     * Показывает страницу с конкретным объявлением
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @param postId  id объявления
+     * @return posts/view или errorPage
+     */
     @GetMapping("/{postId}")
     public String viewPost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
         UserSession.getUser(model, session);
@@ -81,6 +115,13 @@ public class PostController {
         return "posts/view";
     }
 
+    /**
+     * Показывает страницу с объявлениями конкретного пользователя
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @return posts/myPosts
+     */
     @GetMapping("/myPosts")
     public String myPosts(Model model, HttpSession session) {
         User user = UserSession.getUser(model, session);
@@ -88,6 +129,14 @@ public class PostController {
         return "posts/myPosts";
     }
 
+    /**
+     * Удаление конкретного объявления
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @param postId  id объявления
+     * @return redirect:/posts/myPosts или errorPage
+     */
     @GetMapping("delete/{postId}")
     public String deletePost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
         UserSession.getUser(model, session);
@@ -100,6 +149,14 @@ public class PostController {
         return "redirect:/posts/myPosts";
     }
 
+    /**
+     * Показывает страницу редактирования конкретного объявления
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @param postId  id объявления
+     * @return posts/edit или errorPage
+     */
     @GetMapping("edit/{postId}")
     public String editPost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
         UserSession.getUser(model, session);
@@ -112,6 +169,14 @@ public class PostController {
         return "posts/edit";
     }
 
+    /**
+     * Меняет статус объявления на "Продано"
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @param postId  id объявления
+     * @return posts/myPosts или errorPage
+     */
     @GetMapping("isSale/{postId}")
     public String isSale(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
         UserSession.getUser(model, session);
@@ -124,6 +189,14 @@ public class PostController {
         return "posts/myPosts";
     }
 
+    /**
+     * Показывает страницу с формой обновления объявления
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @param postId  id объявления
+     * @return posts/update или errorPage
+     */
     @GetMapping("update/{postId}")
     public String updatePost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
         UserSession.getUser(model, session);
@@ -137,6 +210,16 @@ public class PostController {
         return "posts/update";
     }
 
+    /**
+     * Обновляет данные из формы в БД
+     *
+     * @param post    объявление
+     * @param carName марка авто
+     * @param file    MultipartFile
+     * @param model   Model
+     * @param session HttpSession
+     * @return redirect:/posts/myPosts или errorPage
+     */
     @PostMapping("/update")
     public String update(@ModelAttribute Post post,
                          @RequestParam(value = "car.name", required = false) String carName,
@@ -168,6 +251,33 @@ public class PostController {
         return "redirect:/posts/myPosts";
     }
 
+    /**
+     * Показывает страницу с объявлениями за сегодня
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @return posts/today
+     */
+    @GetMapping("/today")
+    public String postsForLastDay(Model model, HttpSession session) {
+        UserSession.getUser(model, session);
+        model.addAttribute("posts", postService.findForLastDay());
+        return "posts/today";
+    }
+
+    /**
+     * Показывает страницу с объявлениями, в которых есть фото
+     *
+     * @param model   Model
+     * @param session HttpSession
+     * @return posts/withPhoto
+     */
+    @GetMapping("/withPhoto")
+    public String postsWithPhoto(Model model, HttpSession session) {
+        UserSession.getUser(model, session);
+        model.addAttribute("posts", postService.findWithPhoto());
+        return "posts/withPhoto";
+    }
 
     /**
      * Метод, который будет возвращать файлы

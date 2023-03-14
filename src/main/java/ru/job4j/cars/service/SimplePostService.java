@@ -81,4 +81,9 @@ public class SimplePostService implements PostService {
     public boolean isSale(int postId) {
         return postRepository.isSale(postId);
     }
+
+    @Override
+    public List<Post> findWithPhoto() {
+        return postRepository.findWithPhoto();
+    }
 }

@@ -31,7 +31,7 @@ public class HbnPostRepository implements PostRepository {
     private static final String FIND_FOR_LAST_DAY_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
             + " JOIN FETCH p.participates WHERE p IN :fPosts";
     private static final String FIND_WITH_PHOTO_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
-            + " JOIN FETCH p.priceHistory WHERE p.photo IS NOT NULL";
+            + " JOIN FETCH p.priceHistory WHERE LENGTH(p.photo) > 0";
     private static final String FIND_WITH_PHOTO_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
             + " JOIN FETCH p.participates WHERE p IN :fPosts";
     private static final String FIND_BY_CAR_NAME_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"

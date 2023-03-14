@@ -31,4 +31,6 @@ public interface PostService {
     List<Post> findByUserId(int userId);
 
     boolean isSale(int postId);
+
+    List<Post> findWithPhoto();
 }
