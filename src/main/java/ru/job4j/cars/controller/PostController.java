@@ -77,6 +77,7 @@ public class PostController {
             return "errorPage";
         }
         model.addAttribute("post", optionalPost.get());
+        model.addAttribute("priceHistory", optionalPost.get().getPriceHistory());
         return "posts/view";
     }
 

@@ -100,6 +100,22 @@
             </tr>
             </tbody>
         </table>
+        <table class="table table-bordered">
+            <col style="width:50%">
+            <col style="width:50%">
+            <thead>
+            <tr class="table-primary">
+                <th scope="col">История изменения цены</th>
+                <th scope="col">Дата</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="table-secondary" th:each="price:${priceHistory}">
+                <td th:text="${price.after}"/>
+                <td th:text="${#temporals.format(price.created, 'dd-MM-yyyy HH:mm')}"/>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>
