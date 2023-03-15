@@ -84,6 +84,9 @@ mvn spring-boot:run
 Удачная регистрация
 ![alt text](https://github.com/svoh86/job4j_cars/blob/master/img/successAdd.png)
 
+Неудачная регистрация
+![alt text](https://github.com/svoh86/job4j_cars/blob/master/img/failAdd.png)
+
 Авторизация
 ![alt text](https://github.com/svoh86/job4j_cars/blob/master/img/login.png)
 
