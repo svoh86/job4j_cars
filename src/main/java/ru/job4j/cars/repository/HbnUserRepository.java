@@ -22,7 +22,7 @@ public class HbnUserRepository implements UserRepository {
     private static final String FIND_ALL_ORDER_BY_ID = "FROM User ORDER BY id";
     private static final String FIND_BY_ID = "FROM User WHERE id = :fId";
     private static final String FIND_BY_LIKE_LOGIN = "FROM User WHERE login LIKE :fKey";
-    private static final String FIND_BY_LOGIN = "FROM User WHERE login = :fLogin";
+    private static final String FIND_BY_LOGIN_AND_PASSWORD = "FROM User WHERE login = :fLogin AND password = :fPassword";
 
     /**
      * Сохранить в базе.
@@ -54,7 +54,7 @@ public class HbnUserRepository implements UserRepository {
      */
     @Override
     public boolean delete(int userId) {
-      return crudRepository.condition(
+        return crudRepository.condition(
                 DELETE,
                 Map.of("fId", userId)
         );
@@ -97,16 +97,17 @@ public class HbnUserRepository implements UserRepository {
     }
 
     /**
-     * Найти пользователя по login.
+     * Найти пользователя по login и password.
      *
      * @param login login.
      * @return Optional or user.
      */
     @Override
-    public Optional<User> findByLogin(String login) {
+    public Optional<User> findByLoginAndPassword(String login, String password) {
         return crudRepository.optional(
-                FIND_BY_LOGIN,
+                FIND_BY_LOGIN_AND_PASSWORD,
                 User.class,
-                Map.of("fLogin", login));
+                Map.of("fLogin", login,
+                        "fPassword", password));
     }
 }

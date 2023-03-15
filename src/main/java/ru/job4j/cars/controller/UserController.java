@@ -76,7 +76,7 @@ public class UserController {
 
     /**
      * Ищет пользователя в БД. Если его там нет, то возвращает страницу с параметром fail=true.
-     * Иначе переходит на страницу со всеми задачами.
+     * Иначе переходит на страницу со всеми объявлениями.
      * Получает объект httpSession из запроса и устанавливает ей параметр "user".
      *
      * @param user пользователь
@@ -85,7 +85,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public String login(@ModelAttribute User user, HttpServletRequest req) {
-        Optional<User> userOptional = userService.findByLogin(user.getLogin());
+        Optional<User> userOptional = userService.findByLoginAndPassword(user.getLogin(), user.getPassword());
         if (userOptional.isEmpty()) {
             return "redirect:/user/loginPage?fail=true";
         }
