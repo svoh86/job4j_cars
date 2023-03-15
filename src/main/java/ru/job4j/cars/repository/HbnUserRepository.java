@@ -26,13 +26,20 @@ public class HbnUserRepository implements UserRepository {
 
     /**
      * Сохранить в базе.
+     * Если будет выброшено исключение при создании пользователя,
+     * например, нарушено ограничение уникальности логина, тогда
+     * метод вернет пустой Optional.
      *
      * @param user пользователь.
-     * @return Optional пользователя с id.
+     * @return Optional пользователя с id или пустой Optional.
      */
     @Override
     public Optional<User> create(User user) {
-        crudRepository.run(session -> session.persist(user));
+        try {
+            crudRepository.run(session -> session.persist(user));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(user);
     }
 
