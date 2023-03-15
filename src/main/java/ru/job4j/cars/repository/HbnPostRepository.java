@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.Post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class HbnPostRepository implements PostRepository {
     private static final String FIND_BY_ID_JOIN_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
             + " JOIN FETCH p.priceHistory WHERE p.id = :fId";
     private static final String FIND_FOR_LAST_DAY_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
-            + " JOIN FETCH p.priceHistory WHERE p.created > CURRENT_DATE - 1";
+            + " JOIN FETCH p.priceHistory WHERE p.created > :fDate";
     private static final String FIND_FOR_LAST_DAY_PARTICIPATES = "SELECT DISTINCT p FROM Post p"
             + " JOIN FETCH p.participates WHERE p IN :fPosts";
     private static final String FIND_WITH_PHOTO_PRICE_HISTORY = "SELECT DISTINCT p FROM Post p"
@@ -112,10 +113,12 @@ public class HbnPostRepository implements PostRepository {
      */
     @Override
     public List<Post> findForLastDay() {
+        LocalDateTime today = LocalDateTime.now();
         return crudRepository.queryMultiple(
                 FIND_FOR_LAST_DAY_PRICE_HISTORY,
                 FIND_FOR_LAST_DAY_PARTICIPATES,
                 Post.class,
+                Map.of("fDate", today.minusDays(1)),
                 "fPosts");
     }
 

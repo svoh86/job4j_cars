@@ -59,7 +59,7 @@ class HbnUserRepositoryTest {
     public void whenFindByLogin() {
         User user = new User("login", "password");
         repository.create(user);
-        assertThat(repository.findByLogin("login").get()).isEqualTo(user);
+        assertThat(repository.findByLoginAndPassword("login", "password").get()).isEqualTo(user);
     }
 
     @Test
