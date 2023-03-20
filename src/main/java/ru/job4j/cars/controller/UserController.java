@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.service.UserService;
-import ru.job4j.cars.util.UserSession;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,15 +29,12 @@ public class UserController {
      * @param model       Model
      * @param fail        флаг, что пользователь уже существует.
      * @param success     флаг, что регистрация успешна.
-     * @param httpSession HttpSession
      * @return user/add
      */
     @GetMapping("/add")
     public String add(Model model,
                       @RequestParam(name = "fail", required = false) Boolean fail,
-                      @RequestParam(name = "success", required = false) Boolean success,
-                      HttpSession httpSession) {
-        UserSession.getUser(model, httpSession);
+                      @RequestParam(name = "success", required = false) Boolean success) {
         model.addAttribute("fail", fail != null);
         model.addAttribute("success", success != null);
         return "user/add";

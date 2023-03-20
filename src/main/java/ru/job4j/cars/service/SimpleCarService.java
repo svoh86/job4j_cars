@@ -3,8 +3,6 @@ package ru.job4j.cars.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Driver;
-import ru.job4j.cars.model.Engine;
 import ru.job4j.cars.repository.CarRepository;
 
 import java.util.Optional;
@@ -19,11 +17,7 @@ public class SimpleCarService implements CarService {
     private final CarRepository carRepository;
 
     @Override
-    public Car add(String carName, Engine engine, Driver driver) {
-        Car car = new Car();
-        car.setName(carName);
-        car.setEngine(engine);
-        car.setDriver(driver);
+    public Car add(Car car) {
         return carRepository.create(car);
     }
 

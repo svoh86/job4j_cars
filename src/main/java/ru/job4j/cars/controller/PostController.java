@@ -15,7 +15,6 @@ import ru.job4j.cars.service.CarService;
 import ru.job4j.cars.service.DriverService;
 import ru.job4j.cars.service.EngineService;
 import ru.job4j.cars.service.PostService;
-import ru.job4j.cars.util.UserSession;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -40,12 +39,10 @@ public class PostController {
      * Показывает основную страницу со всеми объявлениями
      *
      * @param model   Model
-     * @param session HttpSession
      * @return posts/posts
      */
     @GetMapping
-    public String posts(Model model, HttpSession session) {
-        UserSession.getUser(model, session);
+    public String posts(Model model) {
         model.addAttribute("posts", postService.findAllOrderById());
         return "posts/posts";
     }
@@ -53,13 +50,10 @@ public class PostController {
     /**
      * Показывает страницу с формой добавления объявления
      *
-     * @param model   Model
-     * @param session HttpSession
      * @return posts/add
      */
     @GetMapping("/add")
-    public String add(Model model, HttpSession session) {
-        UserSession.getUser(model, session);
+    public String add() {
         return "posts/add";
     }
 
@@ -82,10 +76,14 @@ public class PostController {
                          @RequestParam(value = "driver.name", required = false) String driverName,
                          @RequestParam("file") MultipartFile file,
                          Model model, HttpSession session) {
-        User user = UserSession.getUser(model, session);
+        User user = (User) session.getAttribute("user");
         Driver driver = driverService.add(driverName, user);
         Engine engine = engineService.add(engineName);
-        Car car = carService.add(carName, engine, driver);
+        Car car = new Car();
+        car.setName(carName);
+        car.setEngine(engine);
+        car.setDriver(driver);
+        carService.add(car);
         PriceHistory priceHistory = new PriceHistory(post.getPrice(), post.getPrice());
         if (!postService.add(post, user, car, priceHistory, file)) {
             model.addAttribute("message", "Объявление не создано!");
@@ -98,13 +96,11 @@ public class PostController {
      * Показывает страницу с конкретным объявлением
      *
      * @param model   Model
-     * @param session HttpSession
      * @param postId  id объявления
      * @return posts/view или errorPage
      */
     @GetMapping("/{postId}")
-    public String viewPost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
-        UserSession.getUser(model, session);
+    public String viewPost(Model model, @PathVariable("postId") Integer postId) {
         Optional<Post> optionalPost = postService.findById(postId);
         if (optionalPost.isEmpty()) {
             model.addAttribute("message", "Объявление не существует!");
@@ -124,7 +120,7 @@ public class PostController {
      */
     @GetMapping("/myPosts")
     public String myPosts(Model model, HttpSession session) {
-        User user = UserSession.getUser(model, session);
+        User user = (User) session.getAttribute("user");
         model.addAttribute("posts", postService.findByUserId(user.getId()));
         return "posts/myPosts";
     }
@@ -133,13 +129,11 @@ public class PostController {
      * Удаление конкретного объявления
      *
      * @param model   Model
-     * @param session HttpSession
      * @param postId  id объявления
      * @return redirect:/posts/myPosts или errorPage
      */
     @GetMapping("delete/{postId}")
-    public String deletePost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
-        UserSession.getUser(model, session);
+    public String deletePost(Model model, @PathVariable("postId") Integer postId) {
         Optional<Post> optionalPost = postService.findById(postId);
         if (optionalPost.isEmpty()) {
             model.addAttribute("message", "Объявление не существует!");
@@ -153,13 +147,11 @@ public class PostController {
      * Показывает страницу редактирования конкретного объявления
      *
      * @param model   Model
-     * @param session HttpSession
      * @param postId  id объявления
      * @return posts/edit или errorPage
      */
     @GetMapping("edit/{postId}")
-    public String editPost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
-        UserSession.getUser(model, session);
+    public String editPost(Model model, @PathVariable("postId") Integer postId) {
         Optional<Post> optionalPost = postService.findById(postId);
         if (optionalPost.isEmpty()) {
             model.addAttribute("message", "Объявление не существует!");
@@ -173,13 +165,11 @@ public class PostController {
      * Меняет статус объявления на "Продано"
      *
      * @param model   Model
-     * @param session HttpSession
      * @param postId  id объявления
      * @return redirect:/posts/myPosts или errorPage
      */
     @GetMapping("isSale/{postId}")
-    public String isSale(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
-        UserSession.getUser(model, session);
+    public String isSale(Model model, @PathVariable("postId") Integer postId) {
         Optional<Post> optionalPost = postService.findById(postId);
         if (optionalPost.isEmpty()) {
             model.addAttribute("message", "Объявление не существует!");
@@ -199,7 +189,6 @@ public class PostController {
      */
     @GetMapping("update/{postId}")
     public String updatePost(Model model, HttpSession session, @PathVariable("postId") Integer postId) {
-        UserSession.getUser(model, session);
         Optional<Post> optionalPost = postService.findById(postId);
         if (optionalPost.isEmpty()) {
             model.addAttribute("message", "Объявление не существует!");
@@ -225,7 +214,7 @@ public class PostController {
                          @RequestParam(value = "car.name", required = false) String carName,
                          @RequestParam("file") MultipartFile file,
                          Model model, HttpSession session) {
-        User user = UserSession.getUser(model, session);
+        User user = (User) session.getAttribute("user");
         Post postSession = (Post) session.getAttribute("post");
         Driver driver = postSession.getCar().getDriver();
         driver.setName(post.getCar().getDriver().getName());
@@ -255,12 +244,10 @@ public class PostController {
      * Показывает страницу с объявлениями за сутки
      *
      * @param model   Model
-     * @param session HttpSession
      * @return posts/today
      */
     @GetMapping("/today")
-    public String postsForLastDay(Model model, HttpSession session) {
-        UserSession.getUser(model, session);
+    public String postsForLastDay(Model model) {
         model.addAttribute("posts", postService.findForLastDay());
         return "posts/today";
     }
@@ -269,12 +256,10 @@ public class PostController {
      * Показывает страницу с объявлениями, в которых есть фото
      *
      * @param model   Model
-     * @param session HttpSession
      * @return posts/withPhoto
      */
     @GetMapping("/withPhoto")
-    public String postsWithPhoto(Model model, HttpSession session) {
-        UserSession.getUser(model, session);
+    public String postsWithPhoto(Model model) {
         model.addAttribute("posts", postService.findWithPhoto());
         return "posts/withPhoto";
     }

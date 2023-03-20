@@ -1,8 +1,6 @@
 package ru.job4j.cars.service;
 
 import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Driver;
-import ru.job4j.cars.model.Engine;
 
 import java.util.Optional;
 
@@ -13,7 +11,7 @@ import java.util.Optional;
  * @version 1.0
  */
 public interface CarService {
-    Car add(String carName, Engine engine, Driver driver);
+    Car add(Car car);
 
     boolean update(Car car);
 
